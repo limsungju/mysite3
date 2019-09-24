@@ -18,8 +18,7 @@
 		<c:import url="/WEB-INF/views/includes/header.jsp"/>
 		<div id="content">
 			<div id="guestbook">
-				<form action="${pageContext.servletContext.contextPath }/guestbook" method="post">
-					<input type="hidden" name="a" value="add">
+				<form action="${pageContext.servletContext.contextPath }/guestbook/add" method="post">
 					<table>
 						<tr>
 							<td>이름</td><td><input type="text" name="name"></td>
@@ -43,7 +42,7 @@
 									<td>${count - status.index }</td>
 									<td>${gbVo.name }</td>
 									<td>${gbVo.regDate }</td>
-									<td><a href="${pageContext.servletContext.contextPath }/guestbook?a=deleteform&no=${gbVo.no }">삭제</a></td>
+									<td><a href="${pageContext.servletContext.contextPath }/guestbook/delete/${gbVo.no }">삭제</a></td>
 								</tr>
 								<tr>
 									<td colspan=4>${fn:replace(gbVo.contents, newline, '<br>') }</td>

@@ -9,9 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import kr.co.itcen.mysite.vo.GuestbookVo;
 
-
+@Repository
 public class GuestbookDao {
 	public Boolean insert(GuestbookVo guestVo) {
 		Boolean result = false;
