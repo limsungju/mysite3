@@ -1,4 +1,4 @@
-package kr.co.itcen.mysite.dao;
+package kr.co.itcen.mysite.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

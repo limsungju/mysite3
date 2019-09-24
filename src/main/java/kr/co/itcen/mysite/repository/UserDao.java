@@ -1,4 +1,4 @@
-package kr.co.itcen.mysite.dao;
+package kr.co.itcen.mysite.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,12 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import kr.co.itcen.mysite.vo.GuestbookVo;
+import org.springframework.stereotype.Repository;
+
 import kr.co.itcen.mysite.vo.UserVo;
 
+@Repository
 public class UserDao {
 	public Boolean insert(UserVo userVo) {
 		Boolean result = false;
@@ -66,7 +66,11 @@ public class UserDao {
 		}
 		return result;
 	}
-
+	
+	public UserVo get(UserVo userVo) {
+		return get(userVo.getEmail(), userVo.getPassword());
+	}
+	
 	public UserVo get(Long no) {
 		UserVo result = null;
 
