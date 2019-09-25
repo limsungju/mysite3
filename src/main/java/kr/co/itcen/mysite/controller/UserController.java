@@ -5,10 +5,12 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import kr.co.itcen.mysite.exception.UserDaoException;
 import kr.co.itcen.mysite.service.UserService;
 import kr.co.itcen.mysite.vo.UserVo;
 
@@ -59,6 +61,9 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session) {
 		// 접근 제어(ACL)
+		if (session == null) {
+			return "redirect:/";
+		}
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser != null) {
 			session.removeAttribute("authUser");
@@ -71,6 +76,9 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.GET)
 	public String modify(HttpSession session, Model model) {
 		// 접근 제어(ACL)
+		if (session == null) {
+			return "redirect:/";
+		}
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser == null) {
 			return "redirect:/";
@@ -100,8 +108,11 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	
-	
+	// Exception이 나면 이곳에서 받는다.
+	@ExceptionHandler(UserDaoException.class)
+	public String handlerException() {
+		return "error/exception";
+	}
 	
 	
 }
