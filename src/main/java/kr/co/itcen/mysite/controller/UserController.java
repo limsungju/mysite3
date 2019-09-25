@@ -108,11 +108,11 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	// Exception이 나면 이곳에서 받는다.
-	@ExceptionHandler(UserDaoException.class)
-	public String handlerException() {
-		return "error/exception";
-	}
+//	// Exception이 나면 이곳에서 받는다.
+//	@ExceptionHandler(UserDaoException.class)
+//	public String handlerException() {
+//		return "error/exception";
+//	}
 	
 	
 }
