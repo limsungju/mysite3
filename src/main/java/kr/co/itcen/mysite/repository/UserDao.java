@@ -1,14 +1,15 @@
 package kr.co.itcen.mysite.repository;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,64 +20,14 @@ import kr.co.itcen.mysite.vo.UserVo;
 public class UserDao {
 	
 	@Autowired
+	private SqlSession sqlSession;
+	
+	@Autowired
 	private DataSource dataSource;
 	
 	public Boolean insert(UserVo userVo) throws UserDaoException{
-		Boolean result = false;
-
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-
-		Statement stmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = dataSource.getConnection();
-
-			String sql = "insert into user values(null, ?, ?, ?, ?, now())";
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, userVo.getName());
-			pstmt.setString(2, userVo.getEmail());
-			pstmt.setString(3, userVo.getPassword());
-			pstmt.setString(4, userVo.getGender());
-
-			int count = pstmt.executeUpdate();
-
-			result = (count == 1);
-
-			stmt = connection.createStatement();
-			// mysql에만 있는 함수
-			rs = stmt.executeQuery("select last_insert_id()");
-			if (rs.next()) {
-				Long no = rs.getLong(1);
-				userVo.setNo(no);
-			}
-
-		} catch (SQLException e) {
-			throw new UserDaoException(e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-	
-	public UserVo get(UserVo userVo) {
-		return get(userVo.getEmail(), userVo.getPassword());
+		int count = sqlSession.insert("user.insert", userVo);
+		return count == 1;
 	}
 	
 	public UserVo get(Long no) {
@@ -127,50 +78,18 @@ public class UserDao {
 		}
 		return result;
 	}
+	
+	public UserVo get(UserVo userVo) {
+		UserVo result = sqlSession.selectOne("getByEmailAndPassword1", userVo);
+		return result;
+	}
 
 	public UserVo get(String email, String password) {
-		UserVo result = null;
-
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = dataSource.getConnection();
-
-			String sql = "select no, name from user where email = ? and password = ?";
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
-
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				Long no = rs.getLong(1);
-				String name = rs.getString(2);
-
-				result = new UserVo();
-				result.setNo(no);
-				result.setName(name);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("email", email);
+		map.put("password", password);
+		
+		UserVo result = sqlSession.selectOne("getByEmailAndPassword2", map);
 		return result;
 	}
 
