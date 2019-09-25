@@ -9,12 +9,19 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import kr.co.itcen.mysite.vo.GuestbookVo;
 
 @Repository
 public class GuestbookDao {
+	
+	@Autowired
+	private DataSource dataSource; // applicationContext.xml에서 설정 후 사용
+	
 	public Boolean insert(GuestbookVo guestVo) {
 		Boolean result = false;
 		
@@ -25,7 +32,7 @@ public class GuestbookDao {
 		ResultSet rs = null;
 
 		try {
-			connection = getConnection();
+			connection = dataSource.getConnection();
 			
 			String sql = "insert into guestbook values(null, ?, ?, ?, now())";
 			pstmt = connection.prepareStatement(sql);
@@ -74,7 +81,7 @@ public class GuestbookDao {
 		PreparedStatement pstmt = null;
 
 		try {
-			connection = getConnection();
+			connection = dataSource.getConnection();
 			
 			String sql = "delete from guestbook where no=? and password=?";
 			
@@ -107,7 +114,7 @@ public class GuestbookDao {
 		ResultSet rs = null;
 
 		try {
-			connection = getConnection();
+			connection = dataSource.getConnection();
 			
 			String sql = "select no, name, contents, date_format(reg_date,'%Y-%m-%d %h:%i:%s') from guestbook order by reg_date desc";
 			pstmt = connection.prepareStatement(sql);
@@ -149,17 +156,5 @@ public class GuestbookDao {
 		return result;
 	}
 	
-	private Connection getConnection() throws SQLException {
-		Connection connection = null;
-		try {
-			Class.forName("org.mariadb.jdbc.Driver");
-			
-			String url = "jdbc:mariadb://192.168.1.84:3306/webdb?characterEncoding=utf8";
-			connection = DriverManager.getConnection(url, "webdb", "webdb");
-		} catch(ClassNotFoundException e) {
-			System.out.println("Fail to Loading Driver:" + e);
-		} 
-		return connection;
-	}
 	
 }
