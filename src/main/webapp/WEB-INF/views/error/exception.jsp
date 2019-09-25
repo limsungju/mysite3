@@ -7,9 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>예외 발생</h1>
-	<p>
-		예외 발생
-	</p>
+	<h1>예외 발생 - ${uri }</h1>
+	<pre>
+	${exception }
+	</pre>
 </body>
 </html>
