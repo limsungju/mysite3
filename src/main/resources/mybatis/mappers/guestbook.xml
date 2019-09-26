@@ -7,7 +7,7 @@
 		select no,
 			   name,
 		 	   contents,
-		 	   date_format(reg_date, '%Y-%m-%d %h:%i:%s')
+		 	   date_format(reg_date, '%Y-%m-%d %h:%i:%s') as regDate
 		 from guestbook
 	 order by reg_date desc;
 		]]>
@@ -18,7 +18,7 @@
 		select no,
 			   name,
 		 	   contents,
-		 	   date_format(reg_date, '%Y-%m-%d %h:%i:%s')
+		 	   date_format(reg_date, '%Y-%m-%d %h:%i:%s') as regDate
 		 from guestbook
 		]]>
 	<if test='_parameter > 0'>
@@ -31,6 +31,23 @@
 	    limit 0, 5;
 		]]>
 	</select>
+	
+	<delete id="delete" parameterType="guestbookvo">
+		<![CDATA[
+		delete
+		  from guestbook
+		 where no = #{no }
+		   and password = #{password }
+		]]>
+	</delete>
+	
+	<insert id="insert" parameterType="guestbookvo">
+		<![CDATA[
+		insert
+		  into guestbook
+		values (null, #{name }, #{password }, #{contents }
+		]]>
+	</insert>
 	
 
 </mapper>
