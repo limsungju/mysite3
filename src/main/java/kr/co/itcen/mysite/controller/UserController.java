@@ -97,12 +97,18 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String modify(@ModelAttribute UserVo vo, HttpSession session, Model model) {
 		// 접근 제어(ACL)
+		if(session == null) {
+			return "redirect:/";
+		}
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser == null) {
 			return "redirect:/";
 		}
+		
 		vo.setNo(authUser.getNo());
 		userService.update(vo);
+		
+		
 		session.setAttribute("authUser", vo);
 		
 		return "redirect:/";

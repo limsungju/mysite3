@@ -35,8 +35,8 @@ public class UserDao {
 		return sqlSession.selectOne("user.getByNo", no);
 	}
 	
-	public UserVo get(UserVo userVo) {
-		UserVo result = sqlSession.selectOne("getByEmailAndPassword1", userVo);
+	public UserVo get(UserVo vo) {
+		UserVo result = sqlSession.selectOne("getByEmailAndPassword1", vo);
 		return result;
 	}
 
@@ -49,46 +49,10 @@ public class UserDao {
 		return result;
 	}
 
-	public Boolean update(UserVo userVo) {
-		Boolean result = false;
-
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = dataSource.getConnection();
-
-			String sql = "update user set name = ?, password = ?, gender = ? where no = ?";
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, userVo.getName());
-			pstmt.setString(2, userVo.getPassword());
-			pstmt.setString(3, userVo.getGender());
-			pstmt.setLong(4, userVo.getNo());
-
-			
-			int count = pstmt.executeUpdate();
-
-			result = (count == 1);
-			
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
+	public Boolean update(UserVo vo) {
+		int count = sqlSession.update("user.update", vo);
+		
+		return count == 1;
 	}
 	
 
