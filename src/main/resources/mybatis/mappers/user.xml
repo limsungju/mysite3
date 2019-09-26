@@ -8,12 +8,15 @@
 		insert
 		  into user
 		values (null, #{name }, #{email }, #{password }, #{gender }, now())
-		
-		where n > 10
 		]]>
+		<selectKey keyProperty="no" resultType="long" order="AFTER"> <!-- parameterType으로 받아온 값을 셋팅 -->
+			<![CDATA[
+			select last_insert_id()
+			]]>
+		</selectKey>
 	</insert>
 	
-	<select id="getByEmailAndPassword1" parameterType="uservo" resultType="userVo">
+	<select id="getByEmailAndPassword1" parameterType="uservo" resultType="uservo">
 		<![CDATA[
 		select no, name
 		  from user
@@ -22,7 +25,17 @@
 		]]>
 	</select>
 	
-	<select id="getByEmailAndPassword2" parameterType="map" resultType="userVo"> <!-- map은 내장 alias -->
+	<!-- where no = #{no } : 아무값이나 가능하지만 의미적으로 일치하는 명을 주는것을 추천 -->
+	<!-- 의미적인 명을 못주는 예외 :  -->
+	<select id="getByNo" parameterType="long" resultType="uservo"> <!-- map은 내장 alias -->
+		<![CDATA[
+		select no, name, email, gender
+		  from user
+		 where no = #{no }
+		]]>
+	</select>
+	
+	<select id="getByEmailAndPassword2" parameterType="map" resultType="uservo"> <!-- map은 내장 alias -->
 		<![CDATA[
 		select no, name
 		  from user
@@ -30,6 +43,22 @@
 		   and password = #{password }
 		]]>
 	</select>
-
+	
+	
+	<update id="update" parameterType="uservo">
+		<![CDATA[
+		update user
+		   set name = #{name },
+		]]>
+		   <if test=" password != ''">
+		   	   <![CDATA[
+		       password = #{password },
+		       ]]>
+		   </if>
+		<![CDATA[
+		       gender = #{gender }
+		 where no = #{no }
+		]]>
+	</update>
 
 </mapper>

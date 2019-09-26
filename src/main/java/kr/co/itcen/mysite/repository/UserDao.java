@@ -25,58 +25,14 @@ public class UserDao {
 	@Autowired
 	private DataSource dataSource;
 	
-	public Boolean insert(UserVo userVo) throws UserDaoException{
-		int count = sqlSession.insert("user.insert", userVo);
+	public Boolean insert(UserVo vo) throws UserDaoException{
+		int count = sqlSession.insert("user.insert", vo);
+		System.out.println(vo);
 		return count == 1;
 	}
 	
 	public UserVo get(Long no) {
-		UserVo result = null;
-
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = dataSource.getConnection();
-
-			String sql = "select no, name, email, gender  from user where no = ?";
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setLong(1, no);
-
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				no = rs.getLong(1);
-				String name = rs.getString(2);
-				String email = rs.getString(3);
-				String gender = rs.getString(4);
-
-				result = new UserVo();
-				result.setNo(no);
-				result.setName(name);
-				result.setEmail(email);
-				result.setGender(gender);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
+		return sqlSession.selectOne("user.getByNo", no);
 	}
 	
 	public UserVo get(UserVo userVo) {
