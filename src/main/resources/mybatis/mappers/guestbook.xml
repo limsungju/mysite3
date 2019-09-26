@@ -45,7 +45,7 @@
 		<![CDATA[
 		insert
 		  into guestbook
-		values (null, #{name }, #{password }, #{contents }
+		values (null, #{name }, #{password }, #{contents }, now() )
 		]]>
 	</insert>
 	
